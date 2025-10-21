@@ -8,7 +8,7 @@ const AppContextProvider = (props) => {
   const [user, setUser] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const [token, setToken] = useState(localStorage.getItem("token"));
-  const [credit, setCredit] = useState(false);
+  const [credit, setCredit] = useState(5);
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const navigate=useNavigate()
 
@@ -31,6 +31,7 @@ const navigate=useNavigate()
       const { data } = await axios.post(backendUrl + '/api/image/generate-image', { prompt }, { headers: { token } })
       if (data.success) {
         loadCreditsData()
+        setCredit(credit - 1);
         return data.resultImage
       } else {
         toast.error(data.message)
