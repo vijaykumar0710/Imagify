@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { assets } from "../assets/assets";
-import { AppContext} from "../context/AppContext";
+import { AppContext } from "../context/AppContext";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const Login = () => {
   const [state, setState] = useState("Login");
-  const { setShowLogin, backendUrl, setToken, setUser} =
+  const { setShowLogin, backendUrl, setToken, setUser } =
     useContext(AppContext);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,35 +16,41 @@ const Login = () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
+      if (state !== "Login" && !name) {
+        toast.error("Please enter your name");
+        return;
+      }
+      if (!email) {
+        toast.error("Please enter your email");
+        return;
+      }
+      if (!password) {
+        toast.error("Please enter your password");
+        return;
+      }
+
+      let url = backendUrl;
+      let dataToSend = { email, password };
+
       if (state === "Login") {
-        const { data } = await axios.post(backendUrl + "/api/user/login", {
-          email,
-          password,
-        });
-
-        if (data.success) {
-          setToken(data.token);
-          setUser(data.user);
-          localStorage.setItem("token", data.token);
-          setShowLogin(false);
-        } else {
-          toast.error(data.message);
-        }
+        url += "/api/user/login";
       } else {
-        const { data } = await axios.post(backendUrl + "/api/user/register", {
-          name,
-          email,
-          password,
-        });
+        url += "/api/user/register";
+        dataToSend.name = name;
+      }
 
-        if (data.success) {
-          setToken(data.token);
-          setUser(data.user);
-          localStorage.setItem("token", data.token);
-          setShowLogin(false);
-        } else {
-          toast.error(data.message);
-        }
+      const { data } = await axios.post(url, dataToSend);
+
+      if (data.success) {
+        setToken(data.token);
+        setUser(data.user);
+        localStorage.setItem("token", data.token);
+        setShowLogin(false);
+        setName("");
+        setEmail("");
+        setPassword("");
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.message);
@@ -57,6 +63,7 @@ const Login = () => {
       document.body.style.overflow = "unset";
     };
   }, []);
+
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 z-10 backdrop-blur-sm bg-black/30 flex justify-center items-center">
       <motion.form
@@ -70,13 +77,17 @@ const Login = () => {
         <h1 className="text-center text-2xl text-neutral-700 font-medium">
           {state}
         </h1>
-        <p className="text-sm">Welcome back!Please sign in to continue</p>
+        <p className="text-sm">
+          {state === "Login"
+            ? "Welcome back! Please sign in to continue"
+            : "Create your account to get started"}
+        </p>
 
         {state !== "Login" && (
           <div className="border px-6 py-2 flex items-center gap-2 rounded-full mt-5">
             <img src={assets.user_icon} alt="" />
             <input
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               value={name}
               type="text"
               className="outline-none text-sm"
@@ -112,8 +123,11 @@ const Login = () => {
         <p className="text-sm text-blue-600 my-4 cursor-pointer">
           Forgot password?
         </p>
-        <button className="bg-blue-600 w-full text-white py-2 rounded-full">
-          {state === "Login" ? "Login" : "create account"}
+        <button
+          type="submit"
+          className="bg-blue-600 w-full text-white py-2 rounded-full"
+        >
+          {state === "Login" ? "Login" : "Create Account"}
         </button>
         {state === "Login" ? (
           <p className="mt-5 text-center">
