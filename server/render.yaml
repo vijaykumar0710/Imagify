@@ -1,22 +1,20 @@
-{
-  "services":
-    [
-      {
-        "key": "web",
-        "plan": "free",
-        "name": "imagify-server",
-        "runtime": "node",
-        "buildCommand": "npm install",
-        "startCommand": "npm start",
-        "envVars":
-          [
-            { "key": "MONGO_URL", "sync": false },
-            { "key": "JWT_SECRET", "sync": false },
-            { "key": "CLIPDROP_API", "sync": false },
-            { "key": "RAZORPAY_KEY_ID", "sync": false },
-            { "key": "RAZORPAY_KEY_SECRET", "sync": false },
-            { "key": "CURRENCY", "sync": false },
-          ],
-      },
-    ],
-}
+services:
+  - type: web
+    name: imagify-server
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CLIPDROP_API
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: CURRENCY
+        value: INR
