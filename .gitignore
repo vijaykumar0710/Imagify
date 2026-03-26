@@ -33,3 +33,9 @@ Thumbs.db
 
 # Testing
 coverage/
+
+# Documentation (local development only)
+DEPLOY_GUIDE.md
+DEPLOYMENT.md
+INTERVIEW_QUESTIONS.md
+PROJECT_INTERVIEW_QUESTIONS.md
